@@ -8,11 +8,14 @@ public class EmployeePayrollService {
 
     public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
     private List<EmployeePayrollData> employeePayrollDataList;
-
-    public EmployeePayrollService(){}
+    private EmployeePayrollDataBase employeePayrollDataBase;
 
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollDataList){
+        this();
         this.employeePayrollDataList = employeePayrollDataList;
+    }
+    public EmployeePayrollService(){
+        employeePayrollDataBase = EmployeePayrollDataBase.getInstance();
     }
     public static void main(String args[]) throws PayrollDatabaseException{
         ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
@@ -20,6 +23,27 @@ public class EmployeePayrollService {
         employeePayrollService.readEmployeePayrollData(IOService.FILE_IO);
         employeePayrollService.writeEmployeePayrollData(IOService.FILE_IO);
     }
+    public void updateEmployeeSalary(String name, double salary) {
+        int result = employeePayrollDataBase.updateEmployeeData(name,salary);
+        if(result == 0)
+            return;
+        EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+        if(employeePayrollData != null)
+            employeePayrollData.salary = salary;
+    }
+
+    private EmployeePayrollData getEmployeePayrollData(String name) {
+        return this.employeePayrollDataList.stream()
+                .filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean checkEmployeePayrollInSyncWithDB(String name) {
+        List<EmployeePayrollData> employeePayrollDataList = employeePayrollDataBase.getEmployeePayrollData(name);
+        return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
+    }
+
     //method to read data
     public List readEmployeePayrollData(IOService ioService) throws PayrollDatabaseException {
         if(ioService.equals(IOService.CONSOLE_IO)) {
@@ -39,7 +63,7 @@ public class EmployeePayrollService {
             return employeeList;
         }
         if(ioService.equals(IOService.DB_IO)) {
-            this.employeePayrollDataList = new EmployeePayrollDataBase().readData();
+            this.employeePayrollDataList = EmployeePayrollDataBase.readData();
             return employeePayrollDataList;
         }
         return null;
