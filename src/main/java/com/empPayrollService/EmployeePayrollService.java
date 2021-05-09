@@ -36,6 +36,7 @@ public class EmployeePayrollService {
         if(ioService.equals(IOService.FILE_IO))
             employeeList = new EmployeePayrollFileIOService().readData();
         return employeeList.size();
+
     }
     //method to write data on console
     public void writeEmployeePayrollData(IOService ioService) {

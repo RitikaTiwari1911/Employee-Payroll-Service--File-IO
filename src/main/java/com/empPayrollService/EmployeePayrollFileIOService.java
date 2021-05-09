@@ -44,7 +44,6 @@ public class EmployeePayrollFileIOService {
         }
     }
 
-    //method to read employee data from file,store it in list and return list
     public List<String> readData(){
         List<String> employeeList = new ArrayList<>();
         try {
