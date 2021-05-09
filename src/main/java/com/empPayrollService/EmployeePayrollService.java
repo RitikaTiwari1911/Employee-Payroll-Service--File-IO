@@ -15,7 +15,7 @@ public class EmployeePayrollService {
         this.employeePayrollDataList = employeePayrollDataList;
     }
     public EmployeePayrollService(){
-        employeePayrollDataBase = EmployeePayrollDataBase.getInstance();
+        employeePayrollDataBase = new EmployeePayrollDataBase();
     }
     public static void main(String args[]) throws PayrollDatabaseException{
         ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();

@@ -8,15 +8,7 @@ import java.util.List;
 public class EmployeePayrollDataBase {
     private static ResultSet resultSet;
     private PreparedStatement employeePayrollDataStatement;
-    private static EmployeePayrollDataBase employeePayrollDBService;
-    private EmployeePayrollDataBase(){
-    }
 
-    public static EmployeePayrollDataBase getInstance(){
-        if(employeePayrollDBService == null)
-            employeePayrollDBService = new EmployeePayrollDataBase();
-        return employeePayrollDBService;
-    }
     public Connection getConnection() throws SQLException {
         String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
         String userName = "root";
@@ -37,8 +29,8 @@ public class EmployeePayrollDataBase {
 
         try {
             Connection connection = this.getConnection();
-            Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
             employeePayrollDataList = this.getEmployeePayrollData(resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -51,10 +43,10 @@ public class EmployeePayrollDataBase {
     }
 
     private int updateEmployeeDataUsingPreparedStatement(String name, double salary) {
-        String sql = String.format("UPDATE payroll_table SET salary = %.2f WHERE name = '%s'",salary,name);
-        try(Connection connection = this.getConnection()){
-            Statement statement = connection.createStatement();
-            return  statement.executeUpdate(sql);
+        String sql = String.format("UPDATE payroll_table SET salary = %.2f WHERE name = '%s';",salary,name);
+         try(Connection connection = this.getConnection()){
+             PreparedStatement statement = connection.prepareStatement(sql);
+             return statement.executeUpdate();
         }catch (SQLException e){
             e.printStackTrace();
         }
