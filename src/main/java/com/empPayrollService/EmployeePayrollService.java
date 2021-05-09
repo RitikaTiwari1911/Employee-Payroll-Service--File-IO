@@ -14,13 +14,14 @@ public class EmployeePayrollService {
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollDataList){
         this.employeePayrollDataList = employeePayrollDataList;
     }
-    public static void main(String args[]){ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
+    public static void main(String args[]) throws PayrollDatabaseException{
+        ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<EmployeePayrollData>();
         EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
         employeePayrollService.readEmployeePayrollData(IOService.FILE_IO);
         employeePayrollService.writeEmployeePayrollData(IOService.FILE_IO);
     }
     //method to read data
-    public long readEmployeePayrollData(IOService ioService) {
+    public List readEmployeePayrollData(IOService ioService) throws PayrollDatabaseException {
         if(ioService.equals(IOService.CONSOLE_IO)) {
             Scanner consoleInputReader = new Scanner(System.in);
             System.out.println("Enter Employee Id:");
@@ -32,12 +33,18 @@ public class EmployeePayrollService {
             double salary=consoleInputReader.nextInt();
             employeePayrollDataList.add(new EmployeePayrollData(id,name,salary));
         }
-        List<String> employeeList = null;
-        if(ioService.equals(IOService.FILE_IO))
+        List<String> employeeList;
+        if(ioService.equals(IOService.FILE_IO)) {
             employeeList = new EmployeePayrollFileIOService().readData();
-        return employeeList.size();
-
+            return employeeList;
+        }
+        if(ioService.equals(IOService.DB_IO)) {
+            this.employeePayrollDataList = new EmployeePayrollDataBase().readData();
+            return employeePayrollDataList;
+        }
+        return null;
     }
+
     //method to write data on console
     public void writeEmployeePayrollData(IOService ioService) {
         if(ioService.equals(IOService.CONSOLE_IO))
