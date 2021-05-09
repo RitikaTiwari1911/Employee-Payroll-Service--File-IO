@@ -1,6 +1,6 @@
 package com.fileOperations;
 
-import com.filewatchservice.Java8WatchServiceExample;
+import com.watchService.Java8WatchServiceExample;
 import org.junit.Assert;
 import org.junit.Test;
 
