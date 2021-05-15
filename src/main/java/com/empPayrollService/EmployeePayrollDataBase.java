@@ -7,7 +7,14 @@ import java.util.List;
 
 public class EmployeePayrollDataBase {
     private static ResultSet resultSet;
+    private static Object employeePayrollDataBase;
     private PreparedStatement employeePayrollDataStatement;
+
+    public static Object getInstance(){
+        if(employeePayrollDataBase == null)
+            employeePayrollDataBase = new EmployeePayrollDataBase();
+        return employeePayrollDataBase;
+    }
 
     public Connection getConnection() throws SQLException {
         String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
