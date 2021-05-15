@@ -31,18 +31,7 @@ public class EmployeePayrollDataBase {
     // reading data from database and returning list
     public List<EmployeePayrollData> readData() throws PayrollDatabaseException {
         String sql = "SELECT * FROM employee_payroll";
-
-        List<EmployeePayrollData> employeePayrollDataList = new ArrayList<>();
-
-        try {
-            Connection connection = this.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-            employeePayrollDataList = this.getEmployeePayrollData(resultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return employeePayrollDataList;
+        return this.getEmployeePayrollDataUsingDB(sql);
     }
 
     public int updateEmployeeData(String name, double salary) {
@@ -69,6 +58,25 @@ public class EmployeePayrollDataBase {
             ResultSet resultSet = employeePayrollDataStatement.executeQuery();
             employeePayrollList = this.getEmployeePayrollData(resultSet);
         } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return employeePayrollList;
+    }
+
+    //for date
+    public List<EmployeePayrollData> getEmployeePayrollForDateRange(LocalDate startDate, LocalDate endDate) {
+        String sql = String.format("select * from payroll_table WHERE start BETWEEN '%s' AND '%s';",Date.valueOf(startDate),Date.valueOf(endDate));
+        return this.getEmployeePayrollDataUsingDB(sql);
+    }
+
+    private List<EmployeePayrollData> getEmployeePayrollDataUsingDB(String sql) {
+        List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
+        try {
+            Connection connection = this.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            employeePayrollList = this.getEmployeePayrollData(resultSet);
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return employeePayrollList;
